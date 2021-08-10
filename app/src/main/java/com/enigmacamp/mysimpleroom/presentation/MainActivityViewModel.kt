@@ -76,8 +76,8 @@ emit(ResourceState.Failed("Ooopss..."))
                 gender = "L",
                 phone = Phone(mobilePhone1 = "0808111222")
             )
-            val customerId = customerRepository.registerNewCustomer(newCustomer)
-            registerPocket(customerId, "Pocket Customer")
+            val pocket = Pocket(pocketName = "Pocket-Customer")
+            customerRepository.registerNewCustomer(newCustomer, pocket)
         }
     }
 

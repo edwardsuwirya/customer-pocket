@@ -1,5 +1,6 @@
 package com.enigmacamp.mysimpleroom.data.repository
 
+import com.enigmacamp.mysimpleroom.data.db.AppDatabase
 import com.enigmacamp.mysimpleroom.data.db.CustomerDao
 import com.enigmacamp.mysimpleroom.data.db.PocketDao
 import com.enigmacamp.mysimpleroom.data.entity.Customer
@@ -8,19 +9,27 @@ import com.enigmacamp.mysimpleroom.data.entity.PocketList
 import com.enigmacamp.mysimpleroom.data.db.PocketListDao
 
 class CustomerRepository(
-    private val customerDao: CustomerDao,
-    private val pocketDao: PocketDao,
-    private val pocketListDao: PocketListDao
+    private val db: AppDatabase
 ) {
-    fun getCustomers() = customerDao.getCustomers()
-    fun registerNewCustomer(customer: Customer) = customerDao.insert(customer)
-    fun getCustomer(id: Int) = customerDao.getCustomerById(id)
-    fun getCustomerAddress() = customerDao.getCustomerAddreses()
-    fun getCustomerPocket(customerId: Int) = customerDao.getCustomerPocket(customerId)
+    fun getCustomers() = db.customerDao().getCustomers()
+    fun registerNewCustomer(customer: Customer, pocket: Pocket) {
+        with(db) {
+            runInTransaction {
+                val customerId = customerDao().insert(customer)
+                val pocketWithId = pocket.copy(customerPocketOwnerId = customerId)
+                pocketDao().insert(pocketWithId)
+            }
+        }
 
-    fun registerPocket(pocket: Pocket) = pocketDao.insert(pocket)
+    }
 
-    fun registerPocketList(pocketList: List<PocketList>) = pocketListDao.insertBulk(pocketList)
+    fun getCustomer(id: Int) = db.customerDao().getCustomerById(id)
+    fun getCustomerAddress() = db.customerDao().getCustomerAddreses()
+    fun getCustomerPocket(customerId: Int) = db.customerDao().getCustomerPocket(customerId)
 
-    fun getCustomerPocketList(pocketId: Int) = pocketDao.getCustomerPocketList(pocketId)
+    fun registerPocket(pocket: Pocket) = db.pocketDao().insert(pocket)
+
+    fun registerPocketList(pocketList: List<PocketList>) = db.pocketListDao().insertBulk(pocketList)
+
+    fun getCustomerPocketList(pocketId: Int) = db.pocketDao().getCustomerPocketList(pocketId)
 }

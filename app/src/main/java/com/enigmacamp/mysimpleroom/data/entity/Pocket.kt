@@ -8,5 +8,5 @@ data class Pocket(
     @PrimaryKey(autoGenerate = true)
     val pocketId: Int = 0,
     val pocketName: String,
-    val customerPocketOwnerId: Long
+    val customerPocketOwnerId: Long = 0
 )

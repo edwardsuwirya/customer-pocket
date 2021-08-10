@@ -24,24 +24,21 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         initViewModel()
         subscribe()
-//        viewModel.registerCustomer()
+        viewModel.registerCustomer()
 
 //        Jangan lupa register customer dulu
-        val pocketList = mutableListOf<String>()
-        pocketList.add("Tabungan Deposito Ku")
-        pocketList.add("Tabungan emasku")
-        viewModel.registerPocketList(1, pocketList)
-        viewModel.customerPocketList(1)
+//        val pocketList = mutableListOf<String>()
+//        pocketList.add("Tabungan Deposito Ku")
+//        pocketList.add("Tabungan emasku")
+//        viewModel.registerPocketList(1, pocketList)
+//        viewModel.customerPocketList(1)
     }
 
     private fun initViewModel() {
         viewModel = ViewModelProvider(this, object : ViewModelProvider.Factory {
             override fun <T : ViewModel?> create(modelClass: Class<T>): T {
                 val db = AppDatabase.getDatabase(this@MainActivity)
-                val customerDao = db.customerDao()
-                val pocketDao = db.pocketDao()
-                val pocketListDao = db.pocketListDao()
-                val customerRepository = CustomerRepository(customerDao, pocketDao, pocketListDao)
+                val customerRepository = CustomerRepository(db)
                 return MainActivityViewModel(customerRepository) as T
             }
 
